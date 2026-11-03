@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHINJUTSU UI — Open-Weights Studio for ComfyUI</title>
+  <link rel="stylesheet" href="/shinjutsu/web/css/shinjutsu.css" />
+</head>
+<body>
+
+  <!-- ========================================================================
+       1. Clean Top Bar (Only Navigation Links + Single Settings Gear Icon)
+       ======================================================================== -->
+  <header class="topbar">
+    <div class="nav-left">
+      <div class="logo-box" onclick="openExplore()" title="SHINJUTSU UI Home">S</div>
+      <div class="nav-links">
+        <div class="nav-item active" data-nav="explore" onclick="openExplore()">Explore</div>
+        <div class="nav-item" data-nav="images" onclick="setMode('images')">Image</div>
+        <div class="nav-item" data-nav="video" onclick="setMode('video')">Video</div>
+        <div class="nav-item" data-nav="audio" onclick="setMode('audio')">Audio</div>
+        <div class="nav-divider"></div>
+        <div class="nav-item" data-nav="shinjutsu" onclick="setMode('shinjutsu')">
+          <span>SHINJUTSU</span>
+          <span class="new-tag lime">New</span>
+        </div>
+        <div class="nav-item" data-nav="cinema" onclick="setMode('cinema')">
+          <span>Cinema Studio</span>
+          <span class="new-tag">Beta</span>
+        </div>
+        <div class="nav-item" data-nav="soul" onclick="setMode('soul')">
+          <span>Character ID</span>
+          <span class="new-tag">Beta</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="icon-btn" onclick="openSettingsModal()" title="Settings" aria-label="Settings">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </button>
+  </header>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- ========================================================================
+       2. Explore Hub View (Zero Technical Jargon)
+       ======================================================================== -->
+  <section id="explore-view" class="explore-view">
+
+    <!-- Row 1: 3 Hero Cards -->
+    <div class="hero-row">
+      <div class="hero-item" onclick="setMode('shinjutsu')">
+        <div class="hero-visual">
+          <div class="shinjutsu-card-bg">
+            <div class="gj-step-card">
+              <img src="/shinjutsu/web/img/hero/shinjutsu_motion_src.webp" alt="Motion Source" />
+              <span class="gj-step-tag">1. Motion</span>
+            </div>
+            <span class="gj-step-op">+</span>
+            <div class="gj-step-card">
+              <img src="/shinjutsu/web/img/hero/shinjutsu_char_ref.webp" alt="Character Ref" />
+              <span class="gj-step-tag">2. Character</span>
+            </div>
+            <span class="gj-step-op">→</span>
+            <div class="gj-step-card gj-step-result">
+              <img src="/shinjutsu/web/img/hero/shinjutsu_result.webp" alt="SHINJUTSU Output" />
+              <span class="gj-step-tag lime">Result</span>
+            </div>
+          </div>
+          <div class="hero-overlay" style="pointer-events:none; background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.82) 100%);">
+            <div class="hero-big-logo"><span class="lime">SHIN</span>JUTSU</div>
+          </div>
+        </div>
+        <div class="hero-caption-title">SHINJUTSU</div>
+        <div class="hero-caption-sub">One upload in. Endless new visions out.</div>
+      </div>
+
+      <div class="hero-item" onclick="setMode('cinema')">
+        <div class="hero-visual">
+          <img class="full-bleed-media" src="/shinjutsu/web/img/hero/cinema_hero.webp" alt="Cinema Studio" />
+          <div class="hero-overlay">
+            <div class="hero-big-logo"><span class="lime">CINEMA</span> STUDIO</div>
+          </div>
+        </div>
+        <div class="hero-caption-title">CINEMA STUDIO <span class="new-tag" style="margin-left:4px; vertical-align:middle;">BETA</span></div>
+        <div class="hero-caption-sub">Direct camera moves & cinematic scenes from a single prompt</div>
+      </div>
+
+      <div class="hero-item" onclick="setMode('soul')">
+        <div class="hero-visual">
+          <img class="full-bleed-media" src="/shinjutsu/web/img/hero/soul_id_hero.webp" alt="Character ID" />
+          <div class="hero-overlay">
+            <div class="hero-big-logo">CHARACTER <span class="lime">ID</span></div>
+          </div>
+        </div>
+        <div class="hero-caption-title">CHARACTER ID <span class="new-tag" style="margin-left:4px; vertical-align:middle;">BETA</span></div>
+        <div class="hero-caption-sub">Lock face &amp; identity from 1 photo across any scene or outfit</div>
+      </div>
+    </div>
+
+    <!-- Row 2: Left Banner + Right 2x2 Bento Grid -->
+    <div class="bento-row">
+      <div class="promo-banner">
+        <img class="bg-anim" src="https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_ltx2_3_i2v-1.webp" alt="Banner" />
+        <div class="promo-content">
+          <div class="promo-h1">
+            CREATE WITHOUT LIMITS
+            <span class="lime">100% OPEN STUDIO</span>
+          </div>
+          <div class="promo-checks">
+            <div>✓ Unlimited SHINJUTSU, Cinema Studio &amp; Character ID</div>
+            <div>✓ Run locally on your own GPU with zero watermarks</div>
+          </div>
+        </div>
+        <button class="promo-cta" onclick="setMode('shinjutsu')">Start Creating</button>
+      </div>
+
+      <div class="bento-2x2">
+        <div class="bento-card" onclick="setMode('shinjutsu')">
+          <div class="bento-icon" style="font-size:12px; font-weight:800; color:var(--accent);">SJ</div>
+          <div>
+            <div class="bento-title">
+              <span>SHINJUTSU</span>
+              <span class="new-tag lime">NEW</span>
+            </div>
+            <div class="bento-sub">One video, many character versions</div>
+          </div>
+        </div>
+
+        <div class="bento-card" onclick="setMode('video')">
+          <div class="bento-icon" style="font-size:12px; font-weight:800; color:var(--text);">VD</div>
+          <div>
+            <div class="bento-title">MiniMax H3 &amp; LTX-2.3</div>
+            <div class="bento-sub">The most advanced open video models</div>
+          </div>
+        </div>
+
+        <div class="bento-card" onclick="setMode('cinema')">
+          <div class="bento-icon" style="font-size:12px; font-weight:800; color:var(--text);">CS</div>
+          <div>
+            <div class="bento-title"><span>Cinema Studio</span> <span class="new-tag">BETA</span></div>
+            <div class="bento-sub">Create cinematic scenes effortlessly</div>
+          </div>
+        </div>
+
+        <div class="bento-card" onclick="setMode('soul')">
+          <div class="bento-icon" style="font-size:12px; font-weight:800; color:var(--text);">ID</div>
+          <div>
+            <div class="bento-title"><span>Character ID</span> <span class="new-tag">BETA</span></div>
+            <div class="bento-sub">Lock character identity from a single photo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Trending Templates Grid -->
+    <div class="section-head">
+      <div class="section-title">Trending Templates</div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <input id="explore-search" class="settings-input" type="text" placeholder="Search templates or models..." oninput="renderComfyExploreGrid(activeExploreCategory)" style="width:210px; border-radius:999px; padding:5px 12px;" />
+        <div class="filter-pills">
+          <div class="filter-pill active" onclick="filterComfyGrid('ALL', this)">All</div>
+          <div class="filter-pill" onclick="filterComfyGrid('Character & Fashion', this)">Character</div>
+          <div class="filter-pill" onclick="filterComfyGrid('Video', this)">Video</div>
+          <div class="filter-pill" onclick="filterComfyGrid('Image', this)">Image</div>
+          <div class="filter-pill" onclick="filterComfyGrid('Audio', this)">Audio</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="comfy-explore-grid" class="comfy-grid"></div>
+  </section>
+
+  <!-- ========================================================================
+       3. Studio Workspace View — Dual Workspace Layouts:
+          - `#sidebar-workspace`: 2-Column Left Control Sidebar + Right Motion Library (`SHINJUTSU` & `Video`)
+          - `#bottom-workspace`: Center Fanned Cards + Bottom Composer (`Image`, `Cinema Studio`, `Character ID`, `Audio`)
+       ======================================================================== -->
+  <section id="studio-view" class="studio-view">
+
+    <!-- Shared Floating Popovers at Studio Root (Works in both Left Sidebar & Bottom Composer!) -->
+    <div id="pop-model" class="dock-popover" style="min-width:340px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Select AI Model</span>
+        <span id="pop-model-mode-tag" style="font-size:10.5px; font-weight:700; color:var(--accent);">STUDIO</span>
+      </div>
+      <div id="pop-model-list" class="model-pop-list"></div>
+      <div id="pop-model-add-wrap" style="padding-top:8px; border-top:1px solid var(--border); display:flex;">
+        <button class="act-btn" style="width:100%; justify-content:center; border-style:dashed; border-color:rgba(242,255,89,0.45); color:var(--accent); padding:7px 10px;" onclick="openTemplateAdderForCurrentMode()">
+          + Add Model / Setup Template for this Mode ›
+        </button>
+      </div>
+    </div>
+
+    <div id="pop-ratio" class="dock-popover" style="min-width:390px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Aspect Ratio & Size</span>
+        <span id="pop-res-readout" style="font-size:11px; font-weight:600; color:var(--accent);">896 × 1152 px</span>
+      </div>
+      <div class="ratio-grid">
+        <div class="ratio-card" data-r="9:16" onclick="selectVisualRatio('9:16')">
+          <div class="ratio-shape-wrap"><div class="ratio-shape" style="width:14px; height:24px;"></div></div>
+          <div class="ratio-lbl">9:16</div>
+          <div class="ratio-use">Vertical</div>
+        </div>
+        <div class="ratio-card" data-r="3:4" onclick="selectVisualRatio('3:4')">
+          <div class="ratio-shape-wrap"><div class="ratio-shape" style="width:16px; height:21px;"></div></div>
+          <div class="ratio-lbl">3:4</div>
+          <div class="ratio-use">Portrait</div>
+        </div>
+        <div class="ratio-card" data-r="1:1" onclick="selectVisualRatio('1:1')">
+          <div class="ratio-shape-wrap"><div class="ratio-shape" style="width:19px; height:19px;"></div></div>
+          <div class="ratio-lbl">1:1</div>
+          <div class="ratio-use">Square</div>
+        </div>
+        <div class="ratio-card" data-r="4:3" onclick="selectVisualRatio('4:3')">
+          <div class="ratio-shape-wrap"><div class="ratio-shape" style="width:21px; height:16px;"></div></div>
+          <div class="ratio-lbl">4:3</div>
+          <div class="ratio-use">Classic</div>
+        </div>
+        <div class="ratio-card" data-r="16:9" onclick="selectVisualRatio('16:9')">
+          <div class="ratio-shape-wrap"><div class="ratio-shape" style="width:25px; height:14px;"></div></div>
+          <div class="ratio-lbl">16:9</div>
+          <div class="ratio-use">Cinema</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:8px; border-top:1px solid var(--border); font-size:11.5px;">
+        <span style="color:var(--muted);">Custom Size (W × H)</span>
+        <div style="display:flex; align-items:center; gap:5px;">
+          <input id="pop-custom-w" class="tweak-select" type="number" step="32" min="256" max="2048" style="width:72px; padding:4px 6px; text-align:center;" />
+          <span style="color:var(--muted);">×</span>
+          <input id="pop-custom-h" class="tweak-select" type="number" step="32" min="256" max="2048" style="width:72px; padding:4px 6px; text-align:center;" />
+          <button class="act-btn" style="padding:4px 9px;" onclick="applyPopoverCustomSize()">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="pop-duration" class="dock-popover" style="min-width:250px;">
+      <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Clip Duration</div>
+      <div id="pop-duration-list" class="model-pop-list"></div>
+    </div>
+
+    <div id="pop-director" class="dock-popover" style="min-width:280px;">
+      <div id="pop-director-title" style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Director Preset</div>
+      <div id="pop-director-list" class="model-pop-list"></div>
+    </div>
+
+    <div id="pop-quality" class="dock-popover" style="min-width:340px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Quality &amp; Sampling Steps</span>
+        <span id="pop-steps-readout" style="font-size:11px; font-weight:600; color:var(--accent);">20 Steps</span>
+      </div>
+      <div class="ratio-grid" style="grid-template-columns:repeat(3, 1fr);">
+        <div class="ratio-card" data-q="Fast" onclick="selectVisualQuality(2)">
+          <div class="ratio-lbl">Fast</div>
+          <div id="pop-q-desc-2" class="ratio-use">8 Steps · Turbo</div>
+        </div>
+        <div class="ratio-card active" data-q="High" onclick="selectVisualQuality(0)">
+          <div class="ratio-lbl">High</div>
+          <div id="pop-q-desc-0" class="ratio-use">20 Steps · Studio</div>
+        </div>
+        <div class="ratio-card" data-q="Ultra" onclick="selectVisualQuality(1)">
+          <div class="ratio-lbl">Ultra</div>
+          <div id="pop-q-desc-1" class="ratio-use">28 Steps · Max</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:8px; border-top:1px solid var(--border); font-size:11.5px;">
+        <span style="color:var(--muted);">Custom Steps (1–50)</span>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <input id="pop-custom-steps" class="tweak-select" type="number" step="1" min="1" max="50" value="20" style="width:76px; padding:4px 6px; text-align:center;" />
+          <button class="act-btn" style="padding:4px 10px;" onclick="applyPopoverCustomSteps()">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="pop-res-tier" class="dock-popover" style="min-width:390px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Resolution &amp; Output Size</span>
+        <span id="pop-tier-res-readout" style="font-size:11px; font-weight:600; color:var(--accent);">896 × 1152 px</span>
+      </div>
+      <div class="ratio-grid" style="grid-template-columns:repeat(3, 1fr);">
+        <div class="ratio-card" data-rt-idx="0" onclick="selectVisualResTier(0)">
+          <div id="pop-rt-badge-0" style="font-size:12px; font-weight:800; color:var(--muted); margin-bottom:2px;">DRAFT</div>
+          <div id="pop-rt-lbl-0" class="ratio-lbl">0.5K</div>
+          <div class="ratio-use" id="pop-rt-dim-0">640 × 832</div>
+        </div>
+        <div class="ratio-card active" data-rt-idx="1" onclick="selectVisualResTier(1)">
+          <div id="pop-rt-badge-1" style="font-size:12px; font-weight:800; color:var(--accent); margin-bottom:2px;">NATIVE</div>
+          <div id="pop-rt-lbl-1" class="ratio-lbl">1K</div>
+          <div class="ratio-use" id="pop-rt-dim-1">896 × 1152</div>
+        </div>
+        <div class="ratio-card" data-rt-idx="2" onclick="selectVisualResTier(2)">
+          <div id="pop-rt-badge-2" style="font-size:12px; font-weight:800; color:var(--text); margin-bottom:2px;">ULTRA</div>
+          <div id="pop-rt-lbl-2" class="ratio-lbl">2K</div>
+          <div class="ratio-use" id="pop-rt-dim-2">1344 × 1728</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:8px; border-top:1px solid var(--border); font-size:11.5px;">
+        <span style="color:var(--muted);">Custom Size (W × H)</span>
+        <div style="display:flex; align-items:center; gap:5px;">
+          <input id="pop-rt-custom-w" class="tweak-select" type="number" step="32" min="256" max="2048" style="width:72px; padding:4px 6px; text-align:center;" />
+          <span style="color:var(--muted);">×</span>
+          <input id="pop-rt-custom-h" class="tweak-select" type="number" step="32" min="256" max="2048" style="width:72px; padding:4px 6px; text-align:center;" />
+          <button class="act-btn" style="padding:4px 9px;" onclick="applyPopoverCustomSize('rt')">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="pop-tags" class="dock-popover" style="min-width:290px;">
+      <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Insert @ Reference Tag</div>
+      <div class="model-pop-list" style="margin-top:6px;">
+        <div class="model-pop-item" onclick="insertPromptTag('<Picture 1>'); document.getElementById('pop-tags').classList.remove('open');">
+          <div>
+            <div style="font-size:12px; font-weight:700; color:var(--accent);">&lt;Picture 1&gt;</div>
+            <div style="font-size:10.5px; color:var(--muted);">Primary Character / Face Reference</div>
+          </div>
+          <span style="font-size:11px; color:var(--muted);">+</span>
+        </div>
+        <div class="model-pop-item" onclick="insertPromptTag('<Picture 2>'); document.getElementById('pop-tags').classList.remove('open');">
+          <div>
+            <div style="font-size:12px; font-weight:700; color:var(--text);">&lt;Picture 2&gt;</div>
+            <div style="font-size:10.5px; color:var(--muted);">Secondary Outfit / Scene / Crew Reference</div>
+          </div>
+          <span style="font-size:11px; color:var(--muted);">+</span>
+        </div>
+        <div class="model-pop-item" onclick="insertPromptTag('<Video 1>'); document.getElementById('pop-tags').classList.remove('open');">
+          <div>
+            <div style="font-size:12px; font-weight:700; color:var(--text);">&lt;Video 1&gt;</div>
+            <div style="font-size:10.5px; color:var(--muted);">Source Motion / Camera Reference Video</div>
+          </div>
+          <span style="font-size:11px; color:var(--muted);">+</span>
+        </div>
+        <div class="model-pop-item" onclick="insertPromptTag('<Audio 1>'); document.getElementById('pop-tags').classList.remove('open');">
+          <div>
+            <div style="font-size:12px; font-weight:700; color:var(--text);">&lt;Audio 1&gt;</div>
+            <div style="font-size:10.5px; color:var(--muted);">Synchronized Soundtrack from Video</div>
+          </div>
+          <span style="font-size:11px; color:var(--muted);">+</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         LAYOUT A: 2-Column Left Sidebar + Right Stage (SHINJUTSU & Video)
+         ====================================================================== -->
+    <div id="sidebar-workspace" class="sidebar-workspace active">
+      <!-- Left Control Panel (~316px) -->
+      <aside class="left-ctrl-panel">
+        <div class="left-ctrl-scroll">
+          <!-- Sub-nav row at top of Left Sidebar -->
+          <div class="left-subtabs">
+            <span id="left-subtab-video" class="left-subtab" onclick="setMode('video')">Create Video</span>
+            <span class="left-subtab" onclick="openSettingsModal('templates')">Presets</span>
+            <span id="left-subtab-motion" class="left-subtab active" onclick="setMode('shinjutsu')">Motion Control</span>
+          </div>
+
+          <!-- Preset Banner Card with `Change` button -->
+          <div class="left-preset-card" onclick="openSettingsModal('templates')">
+            <img id="left-preset-img" src="/shinjutsu/web/img/hero/shinjutsu_result.webp" alt="Preset" />
+            <div class="left-preset-overlay">
+              <span class="left-change-btn">Change</span>
+              <div id="left-preset-title" class="left-preset-title">SHINJUTSU Motion</div>
+            </div>
+          </div>
+
+          <!-- 2-Button Mode Switcher:
+               In SHINJUTSU: [ ◎ Motion transfer ] | [ ⧉ Multi-Ref Swap ]
+               In Video:     [ 🎞 References ]      | [ ⏩ Extend Video ] -->
+          <div class="seg-switch">
+            <button id="seg-btn-1" class="seg-btn active" onclick="selectLeftSubMode(1)">
+              <span id="seg-lbl-1">Motion transfer</span>
+            </button>
+            <button id="seg-btn-2" class="seg-btn" onclick="selectLeftSubMode(2)">
+              <span id="seg-lbl-2">Multi-Ref Swap</span>
+            </button>
+          </div>
+
+          <!-- Dashed Dropzone 1 (Motion Video in SHINJUTSU / References in Video) -->
+          <div id="left-dz-video-box" class="left-dropzone" title="Select from Library or Upload Video" onclick="openAssetLibraryModal(2, event)">
+            <input id="left-dz-1-input" type="file" accept="video/*,image/*,audio/*" style="display:none;" onclick="event.stopPropagation(); this.value=null" onchange="onPickVideo(event)" />
+            <div class="dz-icon-stack">
+              <span class="dz-circle">+</span>
+            </div>
+            <div id="left-dz-1-title" class="dz-title">Add a reference video to extract motion</div>
+            <div id="left-dz-1-sub" class="dz-sub">Click to pick from Library or Upload (4–15s)</div>
+            <video id="deck-vid-preview" class="dz-preview" muted loop playsinline></video>
+            <img id="deck-vid-img-preview" class="dz-preview" />
+            <span id="left-dz-1-clear" class="dz-clear" onclick="clearSlot(2, event)">✕</span>
+          </div>
+
+          <!-- Dashed Dropzone 2 (Primary Character <Picture 1> in SHINJUTSU) -->
+          <div id="left-dz-char-box" class="left-dropzone" title="Select Primary Character (<Picture 1>) from Library or Upload" onclick="openAssetLibraryModal(1, event)">
+            <input id="left-dz-2-input" type="file" accept="image/*" style="display:none;" onclick="event.stopPropagation(); this.value=null" onchange="onPickImage(event)" />
+            <div class="dz-icon-stack">
+              <span class="dz-circle">+</span>
+            </div>
+            <div id="left-dz-2-title" class="dz-title">Add main character (&lt;Picture 1&gt;)</div>
+            <div id="left-dz-2-sub" class="dz-sub">Auto White-BG Cutout · Click to pick or upload</div>
+            <img id="deck-img-preview" class="dz-preview" />
+            <span id="left-dz-2-clear" class="dz-clear" onclick="clearSlot(1, event)">✕</span>
+          </div>
+
+          <!-- Role-Dedicated Multi-Reference Slots (<Picture 2> .. <Picture 9>, shown ONLY in Multi-Ref Swap sub-tab!) -->
+          <div id="left-multi-ref-box" class="left-field-box" style="display:none; padding:8px 10px; gap:6px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <span style="font-size:11px; font-weight:600; color:var(--muted);">Add Extra References (Library / Upload)</span>
+              <span id="left-ref-counter" style="font-size:10.5px; font-weight:700; color:var(--accent);">1 / 9 Images</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:5px;">
+              <button type="button" class="mini-tool-pill" style="justify-content:center; padding:5px 4px; font-size:10.5px;" onclick="openExtraRefLibraryModal('outfit', event)" title="Pick Outfit / Props from Library or Upload (Auto White-BG · fully_preserved)">+ Outfit</button>
+              <button type="button" class="mini-tool-pill" style="justify-content:center; padding:5px 4px; font-size:10.5px;" onclick="openExtraRefLibraryModal('scene', event)" title="Pick Background Scene / Room from Library or Upload (Raw Uncropped · partially_preserved 3D Angle)">+ Scene</button>
+              <button type="button" class="mini-tool-pill" style="justify-content:center; padding:5px 4px; font-size:10.5px;" onclick="openExtraRefLibraryModal('crew', event)" title="Pick Supporting Crew / Dancers from Library or Upload (Auto White-BG · Group Swap)">+ Crew</button>
+            </div>
+            <input id="extra-ref-input" type="file" accept="image/*" style="display:none;" onclick="event.stopPropagation(); this.value=null" onchange="onPickExtraRefImage(event)" />
+            <div id="extra-refs-list" style="display:none; flex-direction:column; gap:5px; margin-top:2px;"></div>
+          </div>
+
+          <!-- Prompt Box (In SHINJUTSU: Toggle ON = Custom Prompt, Toggle OFF = Auto Reference Transfer) -->
+          <div class="left-field-box">
+            <div class="left-field-row">
+              <span class="left-field-lbl">Custom Prompt</span>
+              <div id="left-prompt-toggle" class="toggle-switch on" onclick="toggleLeftPromptBox()" title="Turn OFF to let AI transfer character & motion automatically without custom text">
+                <div class="toggle-knob"></div>
+              </div>
+            </div>
+            <div id="left-prompt-auto-hint" style="display:none; font-size:11px; color:var(--muted); line-height:1.4; padding:2px 0;">
+              <b>Auto Reference Mode:</b> Transfers character, outfit, and motion directly from your attached media.
+            </div>
+            <div id="left-prompt-body" style="display:flex; flex-direction:column; gap:6px;">
+              <textarea
+                id="left-prompt-input"
+                class="left-prompt-area"
+                placeholder="Describe your scene or use <Video 1> and <Picture 1>..."
+                oninput="syncPromptFromLeft(this.value)"
+              >Replace the person in &lt;Video 1&gt; with the character in &lt;Picture 1&gt;.</textarea>
+              <div class="left-prompt-tools" style="display:flex; align-items:center; justify-content:space-between; gap:6px; flex-wrap:nowrap;">
+                <div id="left-dynamic-tag-pills" style="display:flex; gap:4px; flex-wrap:wrap; min-width:0;">
+                  <span class="mini-tool-pill" style="white-space:nowrap;" onclick="insertPromptTag('<Picture 1>')">&lt;Picture 1&gt;</span>
+                  <span class="mini-tool-pill" style="white-space:nowrap;" onclick="insertPromptTag('<Video 1>')">&lt;Video 1&gt;</span>
+                </div>
+                <span id="left-sound-pill" class="mini-tool-pill active-sound" style="white-space:nowrap; flex-shrink:0;" onclick="toggleSoundPill(this)" title="Toggle output audio track ON or Muted">Audio: On</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Model Selector Card (`Model: Shinjutsu (Medium) [New] >`) -->
+          <div class="left-select-card" onclick="toggleDockPopover('pop-model', event)">
+            <span style="font-size:11.5px; color:var(--muted); font-weight:500;">Model</span>
+            <div style="display:inline-flex; align-items:center; gap:6px;">
+              <span id="left-model-lbl" style="font-size:12px; font-weight:700; color:#fff;">Shinjutsu (Medium)</span>
+              <span class="new-tag lime" style="font-size:9.5px; padding:1px 5px;">New</span>
+              <span style="color:var(--muted); font-size:12px;">›</span>
+            </div>
+          </div>
+
+          <!-- 2-Column Row: Duration & Aspect Ratio with Vertical Popup -->
+          <div class="left-2col-row">
+            <div class="left-select-card" onclick="toggleDockPopover('pop-duration', event)">
+              <div>
+                <div style="font-size:10px; color:var(--muted);">Duration</div>
+                <div id="left-dur-lbl" style="font-size:12px; font-weight:700; color:#fff; margin-top:1px;">13s</div>
+              </div>
+              <span style="color:var(--muted); font-size:12px;">›</span>
+            </div>
+
+            <div class="left-select-card" onclick="toggleVertRatioPopup(event)">
+              <div>
+                <div style="font-size:10px; color:var(--muted);">Aspect Ratio</div>
+                <div style="display:inline-flex; align-items:center; gap:5px; margin-top:1px;">
+                  <span id="left-ratio-icon" class="mini-ratio-box" style="width:8px; height:13px;"></span>
+                  <span id="left-ratio-lbl" style="font-size:12px; font-weight:700; color:#fff;">9:16</span>
+                </div>
+              </div>
+              <span style="color:var(--muted); font-size:12px;">›</span>
+            </div>
+
+            <!-- Vertical Aspect Ratio Popup Menu -->
+            <div id="vert-ratio-popup" class="vert-ratio-popup">
+              <div class="vert-ratio-item" data-vr="16:9" onclick="selectVisualRatio('16:9')">
+                <span class="vert-ratio-left"><span class="mini-ratio-box" style="width:14px; height:8px;"></span> 16:9</span>
+                <span class="vr-check"></span>
+              </div>
+              <div class="vert-ratio-item" data-vr="4:3" onclick="selectVisualRatio('4:3')">
+                <span class="vert-ratio-left"><span class="mini-ratio-box" style="width:12px; height:9px;"></span> 4:3</span>
+                <span class="vr-check"></span>
+              </div>
+              <div class="vert-ratio-item" data-vr="1:1" onclick="selectVisualRatio('1:1')">
+                <span class="vert-ratio-left"><span class="mini-ratio-box" style="width:11px; height:11px;"></span> 1:1</span>
+                <span class="vr-check"></span>
+              </div>
+              <div class="vert-ratio-item" data-vr="3:4" onclick="selectVisualRatio('3:4')">
+                <span class="vert-ratio-left"><span class="mini-ratio-box" style="width:9px; height:12px;"></span> 3:4</span>
+                <span class="vr-check"></span>
+              </div>
+              <div class="vert-ratio-item active" data-vr="9:16" onclick="selectVisualRatio('9:16')">
+                <span class="vert-ratio-left"><span class="mini-ratio-box" style="width:8px; height:14px;"></span> 9:16</span>
+                <span class="vr-check">✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Neon-Lime Generate Button in Left Sidebar -->
+        <button class="left-gen-btn" onclick="queueToComfyUI()">
+          <span id="left-gen-btn-lbl">Generate</span>
+        </button>
+      </aside>
+
+      <!-- Right Main Stage & Motion Library -->
+      <main class="right-main-stage">
+        <div class="right-stage-topbar">
+          <div class="right-stage-tabs">
+            <div id="rtab-library" class="stage-tab-pill active" onclick="switchRightStageTab('library')">
+              <span>Motion Library</span>
+            </div>
+            <div id="rtab-history" class="stage-tab-pill" onclick="switchRightStageTab('history')">
+              <span>History</span>
+            </div>
+            <div class="stage-tab-pill" onclick="openSettingsModal('templates')">
+              <span>Workflow Presets</span>
+            </div>
+          </div>
+
+          <input
+            id="motion-lib-search"
+            class="settings-input"
+            type="text"
+            placeholder="Search motion or video templates..."
+            oninput="renderMotionLibraryGrid()"
+            style="width:230px; border-radius:999px; padding:5px 12px;"
+          />
+        </div>
+
+        <!-- Active Rendered Output Player (Shown when media is generated or previewed in SHINJUTSU/Video) -->
+        <div id="right-active-player" class="right-hero-player" style="display:none; flex-direction:column; align-items:center; justify-content:center; padding:14px;">
+          <img id="right-stage-img" class="stage-media" style="max-height:260px; width:auto; max-width:100%; object-fit:contain;" />
+          <video id="right-stage-video" class="stage-media" controls loop playsinline style="max-height:260px; width:auto; max-width:100%; object-fit:contain;"></video>
+          <div class="handoff-bar" style="margin-top:8px; flex-shrink:0;">
+            <button class="handoff-btn" onclick="downloadActiveMedia()" style="color:var(--accent); border-color:rgba(242,255,89,0.35);">Download</button>
+            <button class="handoff-btn" onclick="closeRightActivePlayer()" style="color:var(--muted);">Close Preview</button>
+          </div>
+        </div>
+
+        <!-- Featured Hero Showcase Card (`SHINJUTSU 1.0` / `VIDEO STUDIO` Banner) -->
+        <div id="right-hero-banner" class="right-hero-player">
+          <div class="right-hero-info">
+            <span id="right-hero-badge" class="right-hero-badge">SHINJUTSU 1.0</span>
+            <div id="right-hero-title" class="right-hero-h2">TRANSFER ANY MOTION TO YOUR CHARACTER</div>
+            <div id="right-hero-desc" class="right-hero-p">
+              Upload any dance or action clip on the left and attach a single character photo. Preserves exact choreography, clothing details, and synchronized audio.
+            </div>
+          </div>
+          <div class="right-hero-visuals">
+            <div class="hero-demo-card">
+              <img id="hero-card-img-1" src="/shinjutsu/web/img/hero/shinjutsu_motion_src.webp" alt="Motion Source" />
+              <span id="hero-card-lbl-1" class="hero-demo-lbl">1. Motion Video</span>
+            </div>
+            <span id="hero-card-op-1" style="font-size:18px; font-weight:800; color:var(--accent);">+</span>
+            <div class="hero-demo-card">
+              <img id="hero-card-img-2" src="/shinjutsu/web/img/hero/shinjutsu_char_ref.webp" alt="Character" />
+              <span id="hero-card-lbl-2" class="hero-demo-lbl">2. Your Character</span>
+            </div>
+            <span id="hero-card-op-2" style="font-size:18px; font-weight:800; color:var(--accent);">→</span>
+            <div class="hero-demo-card" style="border-color:var(--accent);">
+              <img id="hero-card-img-3" src="/shinjutsu/web/img/hero/shinjutsu_result.webp" alt="Result" />
+              <span id="hero-card-lbl-3" class="hero-demo-lbl" style="color:var(--accent);">Result</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Motion Library / Official ComfyUI Video Templates Grid -->
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="section-title" style="font-size:12.5px;">Motion Library & Official Presets</div>
+          <span style="font-size:11.5px; color:var(--muted);">Click any card to load its preset</span>
+        </div>
+        <div id="motion-lib-grid" class="motion-lib-grid"></div>
+      </main>
+    </div>
+
+    <!-- ======================================================================
+         LAYOUT B: Center Fanned Showcase + Bottom Composer (`Image`, `Cinema`, `Soul`, `Audio`)
+         ====================================================================== -->
+    <div id="bottom-workspace" class="bottom-workspace">
+      <main class="stage">
+        <div id="empty-state" class="empty-state">
+          <!-- Fanned 5-Card Showcase Stack (100% Static Single-Frame Still Images) -->
+          <div class="fanned-stack">
+            <div class="fan-card" onclick="loadDemoMedia('image', 'https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/flux1_krea_dev-1.webp', '4K Studio Portrait')">
+              <img src="https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/flux1_krea_dev-1.webp" alt="Sample 1" />
+            </div>
+            <div class="fan-card" onclick="loadDemoMedia('image', 'https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/flux1_dev_uso_reference_image_gen-1.webp', 'Character Scene')">
+              <img src="https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/flux1_dev_uso_reference_image_gen-1.webp" alt="Sample 2" />
+            </div>
+            <div class="fan-card" onclick="loadDemoMedia('image', '/shinjutsu/web/img/hero/shinjutsu_char_ref.webp', 'SHINJUTSU Studio Character')">
+              <img src="/shinjutsu/web/img/hero/shinjutsu_char_ref.webp" alt="Sample 3" />
+            </div>
+            <div class="fan-card" onclick="loadDemoMedia('image', 'https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/flux_dev_full_text_to_image-1.webp', 'Editorial Portrait')">
+              <img src="https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/flux_dev_full_text_to_image-1.webp" alt="Sample 4" />
+            </div>
+            <div class="fan-card" onclick="loadDemoMedia('image', 'https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/image_z_image_turbo-1.webp', 'Cinematic Still')">
+              <img src="https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/image_z_image_turbo-1.webp" alt="Sample 5" />
+            </div>
+          </div>
+
+          <div id="stage-title" class="empty-title">START CREATING WITH SHINJUTSU</div>
+          <div id="stage-sub" class="empty-sub">Write what you want to create in the prompt box below, or attach a reference photo to begin.</div>
+        </div>
+
+        <div id="media-wrap" class="media-container">
+          <img id="stage-img" class="stage-media" />
+          <video id="stage-video" class="stage-media" controls loop playsinline></video>
+          <audio id="stage-audio" controls style="display:none; width:360px;"></audio>
+
+          <div class="handoff-bar">
+            <button id="btn-send-shinjutsu" class="handoff-btn" onclick="sendActiveImageToShinjutsu()" style="background:var(--accent); color:#09090b; border-color:var(--accent); font-weight:800;">Use in SHINJUTSU →</button>
+            <button class="handoff-btn" onclick="downloadActiveMedia()" style="color:var(--accent); border-color:rgba(242,255,89,0.35);">Download</button>
+            <button class="handoff-btn" onclick="resetStage()" style="color: var(--muted);">Close Preview</button>
+          </div>
+        </div>
+      </main>
+
+      <footer class="dock-wrap">
+        <!-- Subtle Session History Strip -->
+        <div id="history-strip" style="display:none; gap:6px; align-items:center; justify-content:center; max-width:840px; overflow-x:auto;"></div>
+
+        <!-- Dynamic 5-Card Top Director Strip (Cinema Studio & Character ID) -->
+        <div id="cinema-director-strip" class="cinema-director-strip">
+          <div class="director-card" onclick="openAssetLibraryModal(1, event)" title="Attach Reference Photo">
+            <div class="director-icon">+</div>
+            <div class="director-meta">
+              <span id="dir-lbl-ref" class="director-lbl">References</span>
+              <span id="dir-ref-count" class="director-val">0 / 9</span>
+            </div>
+          </div>
+          <div class="director-card" onclick="openDirectorPopover('film', event)" title="Select Option">
+            <div id="dir-ico-film" class="director-icon" style="font-size:10px; font-weight:800; color:var(--muted);">FL</div>
+            <div class="director-meta">
+              <span id="dir-lbl-film" class="director-lbl">Film setup</span>
+              <span id="dir-val-film" class="director-val">Auto (35mm IMAX)</span>
+            </div>
+          </div>
+          <div class="director-card" onclick="openDirectorPopover('camera', event)" title="Select Option">
+            <div id="dir-ico-camera" class="director-icon" style="font-size:10px; font-weight:800; color:var(--muted);">CM</div>
+            <div class="director-meta">
+              <span id="dir-lbl-camera" class="director-lbl">Camera</span>
+              <span id="dir-val-camera" class="director-val">Bullet Time 360°</span>
+            </div>
+          </div>
+          <div class="director-card" onclick="openDirectorPopover('color', event)" title="Select Option">
+            <div id="dir-ico-color" class="director-icon" style="font-size:10px; font-weight:800; color:var(--muted);">CL</div>
+            <div class="director-meta">
+              <span id="dir-lbl-color" class="director-lbl">Color palette</span>
+              <span id="dir-val-color" class="director-val">Auto (Natural)</span>
+            </div>
+          </div>
+          <div class="director-card" onclick="openDirectorPopover('light', event)" title="Select Option">
+            <div id="dir-ico-light" class="director-icon" style="font-size:10px; font-weight:800; color:var(--muted);">LT</div>
+            <div class="director-meta">
+              <span id="dir-lbl-light" class="director-lbl">Lighting</span>
+              <span id="dir-val-light" class="director-val">Auto (Soft Key)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Bottom Studio Composer Card -->
+        <div class="composer">
+          <!-- Left Column inside Bottom Composer: Prompt Row + Rounded-Rect Pill Controls Row -->
+          <div class="composer-left-col">
+            <div class="composer-main">
+              <div id="slot-1" class="slot-btn" title="Select Reference Image from Library, Creations, or Upload" onclick="openAssetLibraryModal(1, event)">
+                <input id="slot-1-input" type="file" accept="image/*" style="display:none;" onclick="event.stopPropagation(); this.value=null" onchange="onPickImage(event)" />
+                <span class="slot-icon">+</span>
+                <span id="slot-1-lbl" class="slot-lbl">Ref</span>
+                <img id="char-thumb" class="slot-thumb" />
+                <span id="slot-1-clear" class="slot-clear" onclick="clearSlot(1, event)" title="Remove">✕</span>
+              </div>
+
+              <div id="slot-2" class="slot-btn" title="Select Video from Library, Creations, or Upload" style="display:none;" onclick="openAssetLibraryModal(2, event)">
+                <input id="slot-2-input" type="file" accept="video/*,image/*" style="display:none;" onclick="event.stopPropagation(); this.value=null" onchange="onPickVideo(event)" />
+                <span class="slot-icon">+</span>
+                <span id="slot-2-lbl" class="slot-lbl">Video</span>
+                <video id="vid-thumb" class="slot-thumb" muted></video>
+                <span id="slot-2-clear" class="slot-clear" onclick="clearSlot(2, event)" title="Remove">✕</span>
+              </div>
+
+              <input
+                id="prompt-input"
+                class="prompt-input"
+                type="text"
+                value="Describe the scene you imagine"
+                placeholder="Describe the scene you imagine..."
+                oninput="syncPromptFromBottom(this.value)"
+              />
+            </div>
+
+            <div class="composer-footer">
+              <div class="chip-group">
+                <!-- Hidden native select kept synced -->
+                <select id="model-picker" class="model-select" onchange="onModelSelectChange()"></select>
+
+                <!-- 1. Split `[ + | @ ]` Reference & Tag Pill -->
+                <div id="chip-split-ref" class="chip-split">
+                  <span class="chip-split-btn" onclick="openAssetLibraryModal(1, event)" title="Open Reference & Asset Library">+</span>
+                  <span class="chip-split-div"></span>
+                  <span class="chip-split-btn" onclick="toggleDockPopover('pop-tags', event)" title="Insert @ Reference Tag">@</span>
+                </div>
+
+                <!-- 2. Model Selector Pill (`[ Krea 2 › ]`) -->
+                <div id="chip-model-visual" class="chip" onclick="toggleDockPopover('pop-model', event)">
+                  <span id="chip-model-lbl">Krea 2</span>
+                  <span style="font-size:11px; color:var(--muted);">›</span>
+                </div>
+
+                <!-- 3. Aspect Ratio Pill (`[ 3:4 ]`) -->
+                <div id="chip-ratio" class="chip" onclick="toggleDockPopover('pop-ratio', event)" title="Aspect Ratio & Size">
+                  <span id="chip-ratio-icon" class="mini-ratio-box" style="width:9px; height:12px;"></span>
+                  <span id="chip-ratio-txt">3:4</span>
+                </div>
+
+                <!-- 4. Quality Pill (`[ High ]`) -->
+                <div id="chip-quality" class="chip" onclick="toggleDockPopover('pop-quality', event)" title="Quality & Sampling Steps">
+                  <span id="chip-quality-txt">High</span>
+                </div>
+
+                <!-- 5. Resolution Tier Pill (`[ 2K ]` or `1080p`) -->
+                <div id="chip-res-tier" class="chip" onclick="toggleDockPopover('pop-res-tier', event)" title="Resolution & Output Tier">
+                  <span id="chip-res-tier-txt">2K</span>
+                </div>
+
+                <!-- 6. Duration Pill (Shown in Cinema / Audio modes) -->
+                <div id="chip-duration" class="chip" onclick="toggleDockPopover('pop-duration', event)" title="Clip Duration" style="display:none;">
+                  <span id="chip-duration-txt">5s</span>
+                </div>
+
+                <!-- 7. Batch Stepper Pill (`[ − 1/4 + ]`) -->
+                <div class="chip-split" title="Batch Count">
+                  <span class="chip-split-btn" onclick="stepBatchCount(-1)">−</span>
+                  <span id="chip-batch-txt" style="padding:0 6px; font-size:11.5px; font-weight:700; color:#e4e4e7;">1/4</span>
+                  <span class="chip-split-btn" onclick="stepBatchCount(1)">+</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column inside Bottom Composer: Tall Neon-Lime GENERATE Button -->
+          <button id="gen-btn" class="gen-btn" onclick="queueToComfyUI()">
+            <span id="gen-btn-lbl">GENERATE</span>
+          </button>
+        </div>
+      </footer>
+    </div>
+
+  </section>
+
+  <!-- ========================================================================
+       4. 3-Tab Beginner-Friendly Settings Modal (Templates / Models / System)
+       ======================================================================== -->
+  <div id="settings-modal" class="modal-backdrop" onclick="if(event.target===this) closeSettingsModal()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="settings-tabs">
+          <div class="settings-tab active" data-stab="templates" onclick="switchSettingsTab('templates')">Templates</div>
+          <div class="settings-tab" data-stab="models" onclick="switchSettingsTab('models')">Models</div>
+          <div class="settings-tab" data-stab="system" onclick="switchSettingsTab('system')">System</div>
+        </div>
+        <button class="close-btn" onclick="closeSettingsModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- TAB 1: TEMPLATES & BEGINNER-FRIENDLY NO-NODE TWEAKER -->
+        <div id="stab-templates" class="tab-pane active">
+          <div class="settings-row" style="flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="font-weight:700; font-size:13.5px;">Workflow Templates &amp; Mode Model Adder</div>
+              <div style="font-size:11.5px; color:var(--muted); margin-top:2px;">Filter by studio mode, setup missing models in 1 click, or import any public ComfyUI .json into a category.</div>
+            </div>
+            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              <input id="settings-tpl-search" class="settings-input" type="text" placeholder="Search templates..." oninput="renderSettingsTemplatesList()" style="width:155px; padding:5px 9px;" />
+              <select id="import-tpl-category" class="tweak-select" style="width:132px; padding:5px 7px; font-size:11.5px;" title="Target Category for Imported .json">
+                <option value="AUTO">Category: Auto</option>
+                <option value="shinjutsu">SHINJUTSU</option>
+                <option value="video">Video</option>
+                <option value="cinema">Cinema Studio</option>
+                <option value="images">Image</option>
+                <option value="soul">Character ID (Beta)</option>
+                <option value="audio">Audio</option>
+              </select>
+              <label class="act-btn primary" style="cursor:pointer;">
+                <span>+ Import .json</span>
+                <input type="file" accept=".json" style="display:none;" onchange="importCustomTemplateJson(event)" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Category Filter Pills inside Settings -> Templates -->
+          <div id="settings-tpl-cat-pills" class="filter-pills" style="display:flex; gap:6px; flex-wrap:wrap; padding-bottom:6px; border-bottom:1px solid var(--border);">
+            <div class="filter-pill active" data-stcat="ALL" onclick="filterSettingsTemplatesByCat('ALL')">All Modes</div>
+            <div class="filter-pill" data-stcat="shinjutsu" onclick="filterSettingsTemplatesByCat('shinjutsu')">SHINJUTSU &amp; Motion</div>
+            <div class="filter-pill" data-stcat="video" onclick="filterSettingsTemplatesByCat('video')">Video</div>
+            <div class="filter-pill" data-stcat="cinema" onclick="filterSettingsTemplatesByCat('cinema')">Cinema Studio</div>
+            <div class="filter-pill" data-stcat="images" onclick="filterSettingsTemplatesByCat('images')">Image &amp; Character ID</div>
+            <div class="filter-pill" data-stcat="audio" onclick="filterSettingsTemplatesByCat('audio')">Audio</div>
+          </div>
+
+          <!-- Easy No-Node Template Tweaker Panel (Simple + Advanced All-Variables Inspector) -->
+          <div id="tpl-tweaker" class="tweaker-card">
+            <div class="settings-row">
+              <div>
+                <div id="tweak-title" style="font-weight:700; color:var(--accent); font-size:13.5px;">Customize Template</div>
+                <div style="font-size:11px; color:var(--muted);">Switch between Simple sliders or Advanced to edit every parameter in the workflow.</div>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <div class="settings-tabs" style="padding:2px;">
+                  <div id="mode-btn-simple" class="settings-tab active" style="padding:4px 10px; font-size:11px;" onclick="setTweakerMode('simple')">Simple</div>
+                  <div id="mode-btn-adv" class="settings-tab" style="padding:4px 10px; font-size:11px;" onclick="setTweakerMode('advanced')">Advanced (All Vars)</div>
+                </div>
+                <button class="close-btn" onclick="document.getElementById('tpl-tweaker').classList.remove('open')">✕</button>
+              </div>
+            </div>
+
+            <!-- 1. SIMPLE MODE (4 Friendly Controls for Beginners) -->
+            <div id="tweak-simple-pane" class="tweak-grid">
+              <div class="tweak-field">
+                <div class="tweak-label">
+                  <span>Quality & Render Speed</span>
+                  <span id="tweak-steps-val" style="color:var(--accent);">20 Steps</span>
+                </div>
+                <select id="tweak-quality" class="tweak-select" onchange="onChangeQualityPreset(this.value)">
+                  <option value="8">Fast Draft (8 Steps — Fastest)</option>
+                  <option value="20" selected>Balanced Studio (20 Steps — Recommended)</option>
+                  <option value="28">Ultra Detail (28 Steps — Maximum Sharpness)</option>
+                </select>
+                <div class="tweak-hint">Higher steps add finer skin & fabric detail.</div>
+              </div>
+
+              <div class="tweak-field">
+                <div class="tweak-label">
+                  <span>Motion & Pose Lock</span>
+                  <span id="tweak-lock-val" style="color:var(--accent);">68% (Balanced)</span>
+                </div>
+                <input id="tweak-lock" class="tweak-range" type="range" min="30" max="90" step="2" value="68" oninput="document.getElementById('tweak-lock-val').textContent=this.value+'%'" />
+                <div class="tweak-hint">Lower = more freedom for clothes. Higher = stricter pose match.</div>
+              </div>
+
+              <div class="tweak-field">
+                <div class="tweak-label">
+                  <span>Default Aspect Ratio</span>
+                </div>
+                <select id="tweak-ratio" class="tweak-select">
+                  <option value="9:16">9:16 Vertical (TikTok / Reels / Shorts)</option>
+                  <option value="16:9">16:9 Widescreen (YouTube / Cinema)</option>
+                  <option value="3:4">3:4 Portrait (Instagram / Photo)</option>
+                  <option value="1:1">1:1 Square</option>
+                </select>
+                <div class="tweak-hint">Sets optimal pixel resolution for the model.</div>
+              </div>
+
+              <div class="tweak-field">
+                <div class="tweak-label">
+                  <span>Default Prompt Template</span>
+                </div>
+                <input id="tweak-prompt" class="tweak-select" type="text" value="Replace the person in <Video 1> with the character in <Picture 1>." />
+                <div class="tweak-hint">Pre-filled instruction when you load this template.</div>
+              </div>
+            </div>
+
+            <!-- 2. ADVANCED MODE (Auto-Generated Form of Every Editable Variable in the Workflow!) -->
+            <div id="tweak-adv-pane" style="display:none; flex-direction:column; gap:10px; max-height:310px; overflow-y:auto; padding-right:4px;"></div>
+
+            <div style="display:flex; justify-content:flex-end; gap:8px;">
+              <button class="act-btn" onclick="downloadWorkflowJSON()">Export Customized .json</button>
+              <button class="act-btn primary" onclick="saveAndApplyTweakedTemplate()">Save &amp; Use in Studio</button>
+            </div>
+          </div>
+
+          <div id="settings-templates-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </div>
+
+        <!-- TAB 2: MODELS & STORAGE MANAGER -->
+        <div id="stab-models" class="tab-pane">
+          <!-- Dynamic Template / Bundle Setup Box with Sub-Model Breakdown -->
+          <div id="tpl-install-banner" class="settings-box" style="display:none; border-color:rgba(242,255,89,0.4); background:rgba(242,255,89,0.06); flex-direction:column; gap:10px;">
+            <div class="settings-row">
+              <div>
+                <div id="tpl-banner-title" style="font-weight:700; color:var(--accent); font-size:13.5px;">Setup Required Models</div>
+                <div id="tpl-banner-sub" style="font-size:11.5px; color:#d4d4d8; margin-top:3px;">Review and install the required open-weights model components below.</div>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <button id="tpl-banner-install-all-btn" class="act-btn primary" onclick="installAllMissingForActiveTemplate()">Setup All Missing</button>
+                <button class="close-btn" style="padding:4px 8px; font-size:11px;" onclick="document.getElementById('tpl-install-banner').style.display='none'" title="Dismiss">✕</button>
+              </div>
+            </div>
+            <div id="tpl-banner-items" style="display:flex; flex-direction:column; gap:6px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.08);"></div>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div style="font-weight:700; font-size:13.5px;">Open-Weights Models</div>
+              <div id="mgr-disk" style="font-size:11.5px; color:var(--muted); margin-top:2px;">Download models in 1 click or remove unused models to free disk space.</div>
+            </div>
+            <button class="act-btn" onclick="refreshComfySync()">Rescan Folder</button>
+          </div>
+
+          <div id="models-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </div>
+
+        <!-- TAB 3: SYSTEM, TOKENS, CLOUD POD & COMFYUI CONTROLS -->
+        <div id="stab-system" class="tab-pane">
+          <!-- 1. ComfyUI & Cloud Pod Connection Box -->
+          <div class="settings-box">
+            <div class="settings-row" style="flex-wrap:wrap; gap:10px;">
+              <div>
+                <div style="font-weight:700; font-size:13px;">ComfyUI Engine &amp; Cloud Pod Address</div>
+                <div id="mgr-gpu" style="font-size:11.5px; color:var(--accent); margin-top:2px;">Auto-connected when ComfyUI is running locally or via Cloud Pod / Colab Tunnel</div>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <input id="comfy-url" class="settings-input" type="text" value="http://127.0.0.1:8188" placeholder="http://127.0.0.1:8188 or https://pod-8188.proxy.runpod.net" style="width:240px;" onchange="refreshComfySync()" />
+                <button class="act-btn primary" onclick="saveStudioSystemConfig()">Connect &amp; Save</button>
+              </div>
+            </div>
+
+            <div class="settings-row" style="padding-top:10px; border-top:1px solid var(--border); flex-wrap:wrap; gap:10px;">
+              <div>
+                <div style="font-weight:600; font-size:12.5px;">Transport &amp; Comfy Cloud SDK (API v2)</div>
+                <div style="font-size:11px; color:var(--muted); margin-top:2px;">Use Direct (/prompt) for local/Pod ComfyUI, or SDK v2 for comfy-api-proxy &amp; Comfy Cloud.</div>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <select id="cfg-transport" class="tweak-select" style="width:135px; padding:5px 8px; font-size:11.5px;">
+                  <option value="auto">Auto Detect</option>
+                  <option value="direct">Direct (/prompt)</option>
+                  <option value="sdk">Comfy SDK (v2)</option>
+                </select>
+                <input id="cfg-comfy-key" class="settings-input" type="password" placeholder="Optional COMFY_API_KEY..." style="width:165px; padding:5px 8px; font-size:11.5px;" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Model Hub Tokens (HF_TOKEN & Civitai) for Gated & Fast Downloads -->
+          <div class="settings-box">
+            <div class="settings-row" style="flex-wrap:wrap; gap:10px;">
+              <div>
+                <div style="font-weight:700; font-size:13px;">Hugging Face Token (<code style="color:var(--accent);">HF_TOKEN</code>)</div>
+                <div style="font-size:11px; color:var(--muted); margin-top:2px;">Required for gated models like <b>FLUX 3 Image Klein</b>. Accept license on Hugging Face then paste token here.</div>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <input id="cfg-hf-token" class="settings-input" type="password" placeholder="hf_xxxxxxxxxxxxxxxxxxxxxxxx" style="width:230px;" />
+                <button class="act-btn primary" onclick="saveStudioSystemConfig()">Save Token</button>
+              </div>
+            </div>
+
+            <div class="settings-row" style="padding-top:10px; border-top:1px solid var(--border); flex-wrap:wrap; gap:10px;">
+              <div>
+                <div style="font-weight:600; font-size:12.5px;">Civitai API Token &amp; Custom Models Folder</div>
+                <div style="font-size:11px; color:var(--muted); margin-top:2px;">Optional Civitai key for custom LoRAs/Checkpoints and optional custom <code>ComfyUI/models</code> path.</div>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <input id="cfg-civitai-token" class="settings-input" type="password" placeholder="Civitai API Token..." style="width:150px; padding:5px 8px; font-size:11.5px;" />
+                <input id="cfg-models-dir" class="settings-input" type="text" placeholder="Default models/ path" style="width:150px; padding:5px 8px; font-size:11.5px;" />
+              </div>
+            </div>
+
+            <div class="settings-row" style="padding-top:10px; border-top:1px solid var(--border); flex-wrap:wrap; gap:10px;">
+              <div>
+                <div style="font-weight:600; font-size:12.5px;">Strict Open-Weights Guard</div>
+                <div style="font-size:11px; color:var(--muted); margin-top:2px;">Block closed-source partner API nodes so workflows never spend paid external credits.</div>
+              </div>
+              <label style="display:inline-flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                <input id="cfg-open-weights-strict" type="checkbox" checked onchange="saveStudioSystemConfig()" />
+                <span>Enforce 100% Open-Weights</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 3. Live ComfyUI Queue, Interrupt & VRAM Controls -->
+          <div class="settings-box">
+            <div class="settings-row" style="flex-wrap:wrap; gap:10px;">
+              <div>
+                <div style="font-weight:700; font-size:13px;">GPU Memory (VRAM) &amp; Render Queue Controls</div>
+                <div style="font-size:11px; color:var(--muted); margin-top:2px;">Stop a running generation, flush pending queue items, or unload models to free GPU VRAM.</div>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                <button class="act-btn danger" onclick="interruptComfyRender()">Stop Render</button>
+                <button class="act-btn" onclick="clearComfyQueue()">Clear Queue</button>
+                <button class="act-btn primary" onclick="freeVramNow()">Free VRAM</button>
+                <button class="act-btn" onclick="downloadWorkflowJSON()">Export .json</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       5. Reference & Asset Library Modal (Saved Folders + Generated Creations)
+       ======================================================================== -->
+  <div id="asset-library-modal" class="modal-backdrop" onclick="if(event.target===this) closeAssetLibraryModal()">
+    <div class="modal-card" style="max-width:760px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="settings-tabs">
+            <div id="alib-tab-library" class="settings-tab active" onclick="switchAssetLibTab('library')">Saved Library</div>
+            <div id="alib-tab-generated" class="settings-tab" onclick="switchAssetLibTab('generated')">Generated Creations</div>
+          </div>
+          <span id="alib-kind-badge" class="badge ready" style="font-size:10.5px;">IMAGES ONLY</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="close-btn" onclick="closeAssetLibraryModal()">✕</button>
+        </div>
+      </div>
+
+      <div class="modal-body" style="gap:12px;">
+        <!-- Folder Filter & Management Bar (Visible in Saved Library tab) -->
+        <div id="alib-folder-bar" style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; padding-bottom:8px; border-bottom:1px solid var(--border);">
+          <div id="alib-folder-pills" class="filter-pills" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <input id="alib-new-folder-inp" class="settings-input" type="text" placeholder="New folder name..." style="width:135px; padding:4px 9px; font-size:11.5px;" />
+            <button class="act-btn" style="padding:4px 9px; font-size:11.5px;" onclick="createNewAssetFolder()">+ Folder</button>
+          </div>
+        </div>
+
+        <div id="alib-hint-row" style="font-size:11.5px; color:var(--muted); display:flex; justify-content:space-between; align-items:center;">
+          <span id="alib-hint-txt">Click any item to use it as your reference. Files uploaded here stay saved in your local folder for instant reuse.</span>
+          <span id="alib-count-txt" style="color:var(--text); font-weight:600;">0 items</span>
+        </div>
+
+        <!-- Assets Grid -->
+        <div id="alib-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(155px, 1fr)); gap:10px; max-height:390px; overflow-y:auto; padding-right:4px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/shinjutsu/web/js/models_and_compiler.js"></script>
+  <script src="/shinjutsu/web/js/app.js"></script>
+</body>
+</html>

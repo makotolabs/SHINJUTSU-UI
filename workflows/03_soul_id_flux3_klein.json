@@ -1,0 +1,35 @@
+{
+  "1": { "class_type": "UNETLoader", "inputs": { "unet_name": "flux3-image-klein-int8-convrot.safetensors", "weight_dtype": "default" } },
+  "2": { "class_type": "CLIPLoader", "inputs": { "clip_name": "qwen3vl_4b_int8_convrot.safetensors", "type": "flux3", "device": "default" } },
+  "3": { "class_type": "VAELoader", "inputs": { "vae_name": "flux2-vae.safetensors" } },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["2", 0],
+      "text": "The person in <ref_image_0>, same face and identity, wearing a tailored charcoal suit, standing in a sunlit modern loft, editorial photo."
+    }
+  },
+  "5": { "class_type": "CLIPTextEncode", "inputs": { "clip": ["2", 0], "text": "" } },
+  "11": { "class_type": "LoadImage", "inputs": { "image": "face_reference.png" } },
+  "7": {
+    "class_type": "ReferenceMultiLatent",
+    "inputs": {
+      "positive": ["4", 0],
+      "negative": ["5", 0],
+      "vae": ["3", 0],
+      "resolution": "resize",
+      "resolution.megapixels": 1.0,
+      "images.image0": ["11", 0]
+    }
+  },
+  "6": { "class_type": "EmptyFlux2LatentImage", "inputs": { "width": 896, "height": 1152, "batch_size": 1 } },
+  "8": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": ["1", 0], "positive": ["7", 0], "negative": ["7", 1], "latent_image": ["6", 0],
+      "seed": 20272026, "steps": 16, "cfg": 1.0, "sampler_name": "euler", "scheduler": "simple", "denoise": 1.0
+    }
+  },
+  "9": { "class_type": "VAEDecode", "inputs": { "samples": ["8", 0], "vae": ["3", 0] } },
+  "10": { "class_type": "SaveImage", "inputs": { "images": ["9", 0], "filename_prefix": "SHINJUTSU_UI/Soul_ID_FLUX3" } }
+}

@@ -1,0 +1,6 @@
+# Optional: official Comfy Developer Platform transport (Comfy API v2). Requires Python 3.10+.
+#   - Local & offline : run `comfy-api-proxy` next to ComfyUI and set COMFY_BASE_URL=http://127.0.0.1:8189
+#   - Comfy Cloud     : set COMFY_API_KEY (no proxy needed)
+# Without these packages SHINJUTSU automatically uses ComfyUI's native /prompt API.
+comfy-sdk>=0.5.0
+comfy-api-proxy>=0.1.6

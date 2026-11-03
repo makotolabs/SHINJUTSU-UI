@@ -1,0 +1,45 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local ComfyUI runtime (created by setup_and_run.py)
+runtime/
+
+# Local uploads, temporary renders, and large downloaded model weights
+outputs/_uploads/
+outputs/_higg_inspect/
+outputs/_compiled/
+outputs/renders/
+outputs/_smoke/
+outputs/_studio_config.json
+outputs/*.mp4
+outputs/*.png
+outputs/*.jpg
+outputs/*.webp
+models/
+*.safetensors
+*.ckpt
+*.gguf
+*.pth
+*.onnx
+
+# Environment & IDE
+.env
+.venv/
+venv/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.playwright-cli/
+
+# Internal handoff & research notes (never publish)
+docs/
+DEV_HANDOFF_CHECKLIST.md
+DEV_*.md
+smoke_report.md
+smoke_report.json
